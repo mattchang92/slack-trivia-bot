@@ -1,0 +1,19 @@
+{
+  "name": "slack-trivia-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mattchang92/slack-trivia-bot.git"
+  },
+  "author": "Matt Chang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mattchang92/slack-trivia-bot/issues"
+  },
+  "homepage": "https://github.com/mattchang92/slack-trivia-bot#readme"
+}
