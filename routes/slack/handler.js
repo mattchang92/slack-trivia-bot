@@ -81,6 +81,9 @@ const handleText = async (req) => {
         }
       }
     }
+    case 'new season': {
+      
+    }
     default: 
       return { text: "My maker doesn't know NLP.. I only accept exact matches for commands :sob:" };
   }
