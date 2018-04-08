@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const PointSchema = new mongoose.Schema({
   slackId: String,
-  userId: Schema.Types.ObjectId,
-  seasonId: Schema.Types.ObjectId,
+  userId: mongoose.Schema.Types.ObjectId,
+  seasonId: mongoose.Schema.Types.ObjectId,
 });
 
-module.exports = mongoose.model('Point', PointSchema);
+module.exports = mongoose.model('points', PointSchema);

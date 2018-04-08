@@ -6,6 +6,14 @@ const SeasonSchema = new mongoose.Schema({
   isActive: Boolean,
   seasonName: String,
   nickname: String,
+  score: {},
+  categories: {
+    Monday: String,
+    Tuesday: String,
+    Wednesday: String,
+    Thursday: String,
+    Friday: String,
+  },
 });
 
-module.exports = mongoose.model('Season', SeasonSchema);
+module.exports = mongoose.model('seasons', SeasonSchema);

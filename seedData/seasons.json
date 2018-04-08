@@ -1,0 +1,49 @@
+[
+  {
+    "startDate": null,
+    "endDate": null,
+    "isActive": true,
+    "seasonName": "2017 Q4",
+    "score": {
+      "Shawnyyy": 24,
+      "Mazel Tov": 14,
+      "Wingspan": 12,
+      "Dr. Kenny Ken Ken": 12,
+      "Dad Bod*":12,
+      "Sarah": 9,
+      "Siobhan": 9,
+      "Rock Lee": 8,
+      "Richie rich": 8,
+      "DOMS": 7,
+      "Sgt Seale": 7,
+      "Christine": 6,
+      "Andres": 5,
+      "Ruby-bot": 5,
+      "Danno": 5,
+      "Kate+YUKON": 4,
+      "Shaq Lee": 4,
+      "Eamon": 4,
+      "Hartland": 3,
+      "Tats": 2,
+      "Ajinandjuice": 2,
+      "Tech God Rob": 2,
+      "Monies": 2,
+      "DEEJ (Aka Baby with a beard)": 1,
+      "Aaron": 1,
+      "Tyler #2": 1,
+      "Flint": 1,
+      "S'Me": 1,
+      "KAVAN": 1,
+      "Yavocato": 1,
+      "Wee-mak": 1,
+      "Mams": 1
+    },
+    "categories": {
+      "Monday": "Random",
+      "Tuesday": "Fitness",
+      "Wednesday": "Finnians",
+      "Thursday": "Cartoons and Anime",
+      "Friday": "Dad Jokes"
+    }
+  }
+]

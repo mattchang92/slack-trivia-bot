@@ -3,5 +3,12 @@ module.exports = {
     'Point',
     'Season',
     'User',
+  ],
+  days: [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
   ]
 }
