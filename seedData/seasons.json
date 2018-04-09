@@ -2,8 +2,8 @@
   {
     "startDate": null,
     "endDate": null,
-    "isActive": true,
-    "seasonName": "2017 Q4",
+    "isActive": false,
+    "seasonName": "2018 Q1",
     "score": {
       "Shawnyyy": 24,
       "Mazel Tov": 14,
@@ -38,12 +38,42 @@
       "Wee-mak": 1,
       "Mams": 1
     },
-    "categories": {
-      "Monday": "Random",
-      "Tuesday": "Fitness",
-      "Wednesday": "Finnians",
-      "Thursday": "Cartoons and Anime",
-      "Friday": "Dad Jokes"
-    }
+    "categories": {}
+  },
+  {
+    "startDate": null,
+    "endDate": null,
+    "isActive": false,
+    "seasonName": "2017 Q4",
+    "score": {
+      "Dr. Kenny Ken Ken": 11,
+      "Mr. Benjamin Terrill": 3,
+      "Mazel tov" :10,
+      "Ruby-bot": 7,
+      "Marcelo": 1,
+      "Rod": 2,
+      "The other Tyler": 2,
+      "Danno": 5,
+      "Tech God Robin": 5,
+      "David": 1,
+      "Rock Lee": 8,
+      "Trust the Guru": 1,
+      "Sarah": 3 ,
+      "Sakthi": 4,
+      "Siobhan": 2,
+      "Cole Devoy": 1,
+      "MAKSYM": 1,
+      "Chris": 3,
+      "Kavan": 4,
+      "Kate": 4,
+      "Matt": 5,
+      "Shawanieee": 9,
+      "Richie Rich": 1,
+      "DEEJ-(baby with a beard)": 2,
+      "Ollie": 1,
+      "Christine": 3,
+      "Wingspan 7.0": 2
+    },
+    "categories": {}
   }
 ]

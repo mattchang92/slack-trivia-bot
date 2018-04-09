@@ -6,7 +6,7 @@ module.exports = {
     attachments: [
       {
         callback_id: 'topLevelNav',
-        text: "pick one",
+        text: "Select one of the following",
         attachment_type: "default",
         actions: [
           {
@@ -49,4 +49,56 @@ module.exports = {
       }
     ]
   },
+  seasonEndConfirmation: {
+    text: "Are you sure you'd like to end the current season?",
+    response_type: 'ephemeral',
+    attachments: [
+      {
+        callback_id: 'endSeason',
+        text: "Select one of the following",
+        attachment_type: "default",
+        actions: [
+          {
+            name: 'yes',
+            text: 'Yes',
+            type: 'button',
+            value: 'yes'
+          },
+          {
+            name: 'no',
+            text: 'No',
+            type: 'button',
+            value: 'no'
+          },
+        ]
+      }
+    ]
+  },
+  newSeasonConfirmation: {
+    text: "There's already an active season. Would you like to end it and start a new one?",
+    response_type: 'ephemeral',
+    attachments: [
+      {
+        callback_id: 'startNewSeason',
+        text: "Select one of the following",
+        attachment_type: "default",
+        actions: [
+          {
+            name: 'yes',
+            text: 'Yes',
+            type: 'button',
+          },
+          {
+            name: 'no',
+            text: 'No',
+            type: 'button',
+            value: 'no'
+          },
+        ]
+      }
+    ]
+  },
+  helpMenu: {
+    text: "Available commands are:\n*'/trivia new season: Q1 2018'*: Starts off a new trivia season (name required).\n*'/trivia end season'*: ends the current trivia season"
+  }
 }

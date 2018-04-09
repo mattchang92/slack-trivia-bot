@@ -5,7 +5,6 @@ const SeasonSchema = new mongoose.Schema({
   endDate: Date,
   isActive: Boolean,
   seasonName: String,
-  nickname: String,
   score: {},
   categories: {
     Monday: String,
