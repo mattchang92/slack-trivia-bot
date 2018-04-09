@@ -1,4 +1,5 @@
 const moment = require('moment-timezone');
+const mongoose = require('mongoose');
 
 const models = require('../../models');
 const content = require('../../content');
@@ -8,11 +9,26 @@ const formatCategoryResponse = categories => {
   return Object.keys(categories)
     .filter(name => config.days.includes(name))
     .reduce((acc, name) => acc + `*${name}*: ${categories[name]}. \n`, '');
-}
+};
 
 const formatScoreResponse = score => {
   return Object.keys(score)
     .reduce((acc, name) => acc + `${name}: ${score[name]} points. \n`, '');
+};
+
+const sendAwardPointTemplate = async () => {
+  const users = await models.User.find().lean();
+  const nameSelection = users.map(user => ({
+    text: `${user.firstName} ${user.lastName}`,
+    value: user._id,
+  }));
+
+  return content({ nameSelection }).awardPoint;
+};
+
+const cancelPoint = async pointId => {
+  await models.Point.remove({ _id: pointId });
+  return { text: "Point has been revoked" };
 }
 
 const buildScoreObject = async seasonId => {
@@ -44,8 +60,7 @@ const handleTopLevelNav = async (request, action) => {
         style: season.isActive ? 'danger' : '',
       }));
 
-      const response = content.seasonSelect;
-      response.attachments[0].actions = actions;
+      const response = content({ actions }).seasonSelect;
 
       return response;
     }
@@ -53,15 +68,15 @@ const handleTopLevelNav = async (request, action) => {
       const currentSeason = await models.Season.findOne({ isActive: true });
       const stringifiedCategories = formatCategoryResponse(currentSeason.categories);
       
-      return { text: `Current daily categories are: \n${stringifiedCategories}\n\n Type *"/trivia update categories: (comma separate values)"* to update the weekly categories` };
+      return { text: `Current daily categories are: \n${stringifiedCategories}\n\n Type *"/trivia update categories: (comma separated values)"* to update the weekly categories` };
     }
     case 'help':
-      return content.helpMenu;
+      return content().helpMenu;
   }
 }
 
 
-const handleButton = async (req) => {
+const handleInteractive = async (req) => {
   // console.log('---------------------',req.body);
   const request = JSON.parse(req.body.payload);
   // console.log('---------------', request)
@@ -103,6 +118,30 @@ const handleButton = async (req) => {
         return startNewSeason(action.value);
       } else {
         return { text: 'Cancelled' };
+      }
+    }
+    case 'awardPoint': {
+      const activeSeason = await models.Season.findOne({ isActive: true });
+      const user = await models.User.findOne({ _id: action.selected_options[0].value });
+      const newPoint = new models.Point({
+        userId: action.selected_options[0].value,
+        seasonId: activeSeason._id
+      });
+      newPoint.save();
+      const pointId = newPoint._id;
+      console.log(user);
+
+      return content({ 
+        name: `${user.firstName} ${user.lastName}`,
+        pointId,
+      }).awardPointAndThen;
+    }
+    case 'awardPointAndThen': {
+      if (action.name === 'anotherPoint') {
+        console.log('here i ammmm')
+        return Promise.resolve(sendAwardPointTemplate());
+      } else if (action.name === 'cancelPoint') {
+        return cancelPoint(action.value);
       }
     }
   }
@@ -153,24 +192,28 @@ const handleText = async (req) => {
       if (!name) return { text: "New seasons need a name. Eg. *\"/trivia new season: Q2 2018\"*" };
 
       const activeSeason = await models.Season.findOne({ isActive: true });
-      const confirmationResponse = content.newSeasonConfirmation;
-      confirmationResponse.attachments[0].actions[0].value = name.trim();
+      const confirmationResponse = content({ value: name.trim() }).newSeasonConfirmation;
 
       return activeSeason ? confirmationResponse : startNewSeason(name.trim());
     }
     case 'end season': {
       const activeSeason = await models.Season.findOne({ isActive: true });
-      return activeSeason ? content.seasonEndConfirmation : { text: "No active seasons currently" }
+      return activeSeason ? content().seasonEndConfirmation : { text: "No active seasons currently" }
     }
+    case 'points': {
+      return sendAwardPointTemplate();
+    }
+    case 'help':
+      return content().helpMenu;
     default: 
-      return { text: "My maker doesn't know NLP.. I only accept exact matches for commands :sob:" };
+      return { text: "Sorry but NLP is beyond the scope of my programmer's abilities :cry: .. I only accept case *insensitive* exact matches for commands :sob:" };
   }
 };
 
 
 module.exports = {
-  handleButtonCommand: (req, res, next) => {
-    handleButton(req)
+  handleInteractiveCommand: (req, res, next) => {
+    handleInteractive(req)
       .then(response => {
         res.status(200).json(response);
         next();

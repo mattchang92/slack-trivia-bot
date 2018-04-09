@@ -10,11 +10,11 @@ router.get('/', (req, res, next) => {
 router.post('/', (req, res, next) => {
   console.log(req.body);
   if (req.body.payload) {
-    handler.handleButtonCommand(req, res, next);
+    handler.handleInteractiveCommand(req, res, next);
   } else if (req.body.text) {
     handler.handleTextCommand(req, res, next);
   } else {
-    res.json(content.topLevel)
+    res.json(content().topLevel)
   }
 })
 
