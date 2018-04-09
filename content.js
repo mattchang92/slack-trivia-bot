@@ -149,6 +149,31 @@ module.exports = (options = {}) => (
     },
     helpMenu: {
       text: "Available commands are:\n*'/trivia new season: ENTER NAME'*: Starts off a new trivia season (name required).\n*'/trivia end season'*: ends the current trivia season.\n*'/trivia update categories: (comma separated values)'*: to update the weekly categories\n*'/trivia points'*: opens up the award points menu"
-    }
+    },
+    permissionDeniedTemplate: {
+      text: options.text,
+        attachments: [
+          {
+            text: '',
+            image_url: options.gif
+          }
+        ]
+    },
+    permissionDeniedText: [
+      "I'm sorry Dave, I'm afraid I can't do that",
+      "Wait a second you're not Ruby",
+      "Only Ruby-Bot can assign points",
+      "You're not Ruby.. :thinking_face:",
+      "Hey.. you.. stop that! I'm watching you :cop:",
+      "Nice try, but nope.",
+      "Hey knock that out!"
+    ],
+    permissionDeniedGifs: [
+      "http://78.media.tumblr.com/tumblr_lxdyy4Lmeb1r4kfic.gif",
+      "http://www.reactiongifs.com/r/2013/06/no-def-not.gif",
+      "https://media.giphy.com/media/l4HnXMxrPGGXmDHW0/giphy.gif",
+      "http://www.reactiongifs.com/r/nsh.gif",
+      "https://media.giphy.com/media/JYZ397GsFrFtu/giphy.gif'",
+    ]
   }
 )

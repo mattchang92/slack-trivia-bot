@@ -5,6 +5,8 @@ const models = require('../../models');
 const content = require('../../content');
 const config = require('../../config');
 
+const adminIds = [process.env.MATT_SLACK_ID, process.env.RUBY_SLACK_ID];
+
 const formatCategoryResponse = categories => {
   return Object.keys(categories)
     .filter(name => config.days.includes(name))
@@ -26,6 +28,14 @@ const sendAwardPointTemplate = async () => {
   return content({ nameSelection }).awardPoint;
 };
 
+const sendPermissionDeniedTemplate = () => {
+  const findRand = arr => arr[Math.floor(arr.length * Math.random())]; 
+  const text = content().permissionDeniedText;
+  const gifs = content().permissionDeniedGifs;
+
+  return content({ text: findRand(text), gif: findRand(gifs) }).permissionDeniedTemplate;
+}
+
 const cancelPoint = async pointId => {
   await models.Point.remove({ _id: pointId });
   return { text: "Point has been revoked" };
@@ -37,7 +47,6 @@ const buildScoreObject = async seasonId => {
     { $match: { seasonId } },
     { $group: { _id: "$userId", points: { $sum: 1 } } }
   ]);
-  console.log('users---------------', pointsAggregate);
 
   return users.reduce((acc, user) => {
     const pointsObj = pointsAggregate.find(obj => obj._id === user._id.toString());
@@ -77,9 +86,7 @@ const handleTopLevelNav = async (request, action) => {
 
 
 const handleInteractive = async (req) => {
-  // console.log('---------------------',req.body);
   const request = JSON.parse(req.body.payload);
-  // console.log('---------------', request)
   const action = request.actions[0];
   switch(request.callback_id) {
     case 'topLevelNav': {
@@ -99,7 +106,6 @@ const handleInteractive = async (req) => {
       const decision = action.value;
       if (decision === 'yes') {
         const activeSeason = await models.Season.findOne({ isActive: true });
-        console.log('update-----------', activeSeason)
         if (activeSeason) {
           activeSeason.isActive = false;
           activeSeason.save();
@@ -129,7 +135,6 @@ const handleInteractive = async (req) => {
       });
       newPoint.save();
       const pointId = newPoint._id;
-      console.log(user);
 
       return content({ 
         name: `${user.firstName} ${user.lastName}`,
@@ -138,8 +143,7 @@ const handleInteractive = async (req) => {
     }
     case 'awardPointAndThen': {
       if (action.name === 'anotherPoint') {
-        console.log('here i ammmm')
-        return Promise.resolve(sendAwardPointTemplate());
+        return sendAwardPointTemplate();
       } else if (action.name === 'cancelPoint') {
         return cancelPoint(action.value);
       }
@@ -168,6 +172,7 @@ const startNewSeason = (name) => {
 
 const handleText = async (req) => {
   const command = req.body.text.split(':')[0].trim().toLowerCase();
+  const userSlackId = req.body.user_id;
   
   switch(command) {
     case 'update categories': {
@@ -201,6 +206,7 @@ const handleText = async (req) => {
       return activeSeason ? content().seasonEndConfirmation : { text: "No active seasons currently" }
     }
     case 'points': {
+      if (!adminIds.includes(userSlackId)) return sendPermissionDeniedTemplate();
       return sendAwardPointTemplate();
     }
     case 'help':
