@@ -5,12 +5,13 @@ const models = require('../../models');
 const content = require('../../content');
 const config = require('../../config');
 
-const adminIds = [process.env.MATT_SLACK_ID, process.env.RUBY_SLACK_ID];
+const adminIds = [process.env.RUBY_SLACK_ID];
+// const adminIds = [process.env.MATT_SLACK_ID, process.env.RUBY_SLACK_ID];
 
 const formatCategoryResponse = categories => {
   return Object.keys(categories)
     .filter(name => config.days.includes(name))
-    .reduce((acc, name) => acc + `*${name}*: ${categories[name]}. \n`, '');
+    .reduce((acc, name) => acc + `*${name}*: ${categories[name] || 'not yet set'}\n`, '');
 };
 
 const formatScoreResponse = score => {
@@ -73,6 +74,9 @@ const handleTopLevelNav = async (request, action) => {
 
       return response;
     }
+    case 'addQuestion':
+      return { text: "Coming soon.." };
+      return content().addQuestionInstructions;
     case 'viewCategories': {
       const currentSeason = await models.Season.findOne({ isActive: true });
       const stringifiedCategories = formatCategoryResponse(currentSeason.categories);
@@ -208,6 +212,19 @@ const handleText = async (req) => {
     case 'points': {
       if (!adminIds.includes(userSlackId)) return sendPermissionDeniedTemplate();
       return sendAwardPointTemplate();
+    }
+    case 'question': {
+      return { text: "Coming soon..." };
+      const input = req.body.split(':').slice(1).join('');
+      const splitInput = input.split('@');
+      if (splitInput.length === 1) {
+        return { text: 'A time must be specified' };
+      } else if (splitInput.length > 2) {
+        return { text: 'Sorry but "@" is a reserved to specify the question delivery time' };
+      } else {
+        const question = splitInput[0].trim();
+        const time = splitInput[1].trim();
+      }
     }
     case 'help':
       return content().helpMenu;

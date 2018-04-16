@@ -17,7 +17,7 @@ module.exports = (options = {}) => (
               value: 'scoreSelect'
             },
             {
-              name: 'question',
+              name: 'addQuestion',
               text: 'Enqueue Question',
               type: 'button',
               value: 'addQuestion'
@@ -37,6 +37,9 @@ module.exports = (options = {}) => (
           ]
         }
       ]
+    },
+    addQuestionInstructions: {
+      text: "Queue up a question for me to ask at a specified time. To add a question:\n\n*'/trivia question: QUESTION HERE @ TIME'*\n\n Examples of valid TIME formats *4:20pm*, *tomorrow at 4:20pm*, *Thursday 4:20pm*"
     },
     seasonSelect: {
       text: "Which season's score would you like to check?",
@@ -148,7 +151,7 @@ module.exports = (options = {}) => (
       ]
     },
     helpMenu: {
-      text: "Available commands are:\n*'/trivia new season: ENTER NAME'*: Starts off a new trivia season (name required).\n*'/trivia end season'*: ends the current trivia season.\n*'/trivia update categories: (comma separated values)'*: to update the weekly categories\n*'/trivia points'*: opens up the award points menu"
+      text: "Available (Ruby-Bot only) commands are:\n*'/trivia new season: ENTER NAME'*: Starts off a new trivia season (name required).\n*'/trivia end season'*: ends the current trivia season.\n*'/trivia update categories: (comma separated values)'*: to update the weekly categories\n*'/trivia points'*: opens up the award points menu"
     },
     permissionDeniedTemplate: {
       text: options.text,
@@ -165,7 +168,7 @@ module.exports = (options = {}) => (
       "Only Ruby-Bot can assign points",
       "You're not Ruby.. :thinking_face:",
       "Hey.. you.. stop that! I'm watching you :cop:",
-      "Nice try, but nope.",
+      "Nice try, but you're not Ruby.",
       "Hey knock that out!"
     ],
     permissionDeniedGifs: [
