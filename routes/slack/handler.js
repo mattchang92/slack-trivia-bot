@@ -79,9 +79,13 @@ const handleTopLevelNav = async (request, action) => {
       return content().addQuestionInstructions;
     case 'viewCategories': {
       const currentSeason = await models.Season.findOne({ isActive: true });
-      const stringifiedCategories = formatCategoryResponse(currentSeason.categories);
-      
-      return { text: `Current daily categories are: \n${stringifiedCategories}\n\n Type *"/trivia update categories: (comma separated values)"* to update the weekly categories` };
+      if (currentSeason) {
+        const stringifiedCategories = formatCategoryResponse(currentSeason.categories);
+        
+        return { text: `Current daily categories are: \n${stringifiedCategories}\n\n Type *"/trivia update categories: (comma separated values)"* to update the weekly categories` };
+      } else {
+        return { text: 'No seasons currently active' };
+      }
     }
     case 'help':
       return content().helpMenu;
