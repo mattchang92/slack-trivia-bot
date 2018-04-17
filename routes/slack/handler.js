@@ -6,7 +6,6 @@ const content = require('../../content');
 const config = require('../../config');
 
 const adminIds = [process.env.RUBY_SLACK_ID];
-// const adminIds = [process.env.MATT_SLACK_ID, process.env.RUBY_SLACK_ID];
 
 const formatCategoryResponse = categories => {
   return Object.keys(categories)
@@ -201,6 +200,7 @@ const handleText = async (req) => {
       }
     }
     case 'new season': {
+      if (!adminIds.includes(userSlackId)) return sendPermissionDeniedTemplate();
       const name = req.body.text.split(':')[1];
       if (!name) return { text: "New seasons need a name. Eg. *\"/trivia new season: Q2 2018\"*" };
 
@@ -210,6 +210,7 @@ const handleText = async (req) => {
       return activeSeason ? confirmationResponse : startNewSeason(name.trim());
     }
     case 'end season': {
+      if (!adminIds.includes(userSlackId)) return sendPermissionDeniedTemplate();
       const activeSeason = await models.Season.findOne({ isActive: true });
       return activeSeason ? content().seasonEndConfirmation : { text: "No active seasons currently" }
     }
