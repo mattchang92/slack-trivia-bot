@@ -151,7 +151,7 @@ module.exports = (options = {}) => (
       ]
     },
     helpMenu: {
-      text: "Available (Ruby-Bot only) commands are:\n*'/trivia new season: ENTER NAME'*: Starts off a new trivia season (name required).\n*'/trivia end season'*: ends the current trivia season.\n*'/trivia update categories: (comma separated values)'*: to update the weekly categories\n*'/trivia points'*: opens up the award points menu"
+      text: "Ruby-Bot only commands:\n*'/trivia new season: ENTER NAME'*: Starts off a new trivia season (name required).\n*'/trivia end season'*: ends the current trivia season.\n*'/trivia points'*: opens up the award points menu\n\nGeneral commands: \n*'/trivia update categories: (comma separated values)'*: to update the weekly categories\n\nUpcoming features:\n-Queueing questions to be posted at a specified date/time\n-Nickname update command\n-Welcome all requests/suggestions"
     },
     permissionDeniedTemplate: {
       text: options.text,
