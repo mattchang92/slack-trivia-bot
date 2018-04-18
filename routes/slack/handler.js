@@ -51,7 +51,7 @@ const buildScoreObject = async seasonId => {
   return users.reduce((acc, user) => {
     const pointsObj = pointsAggregate.find(obj => obj._id === user._id.toString());
     const individualScore = pointsObj ? pointsObj.points : 0;
-    const name = user.nickname || `${user.firstName} ${user.lastName[0]}.`;
+    const name = user.nickname || `${user.firstName} ${user.lastName[0]}`;
 
     return Object.assign(acc, { [name]: individualScore });
   }, {});
