@@ -15,7 +15,12 @@ const formatCategoryResponse = categories => {
 
 const formatScoreResponse = score => {
   return Object.keys(score)
-    .reduce((acc, name) => acc + `${name}: ${score[name]} points. \n`, '');
+    .sort((user1, user2) => {
+      if (score[user1] === score[user2]) return user1 < user2 ? -1 : 1;
+
+      return score[user1] > score[user2] ? -1 : 1;
+    })
+    .reduce((acc, name, i) => acc + `${name}: ${score[name]} ${score[name] === 1 ? 'point' : 'points'} ${i === 0 ? ':trophy:' : ''} \n`, '');
 };
 
 const sendAwardPointTemplate = async () => {
