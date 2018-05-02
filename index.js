@@ -8,6 +8,8 @@ const bodyParser = require('body-parser');
 const content = require('./content');
 const router = require('./router');
 
+const { addNonExistingUser } = require('./middleware');
+
 const mongoose = require('mongoose');
 mongoose.connect(process.env.MONGODB_URL);
 mongoose.connection.once('open', () => {
@@ -21,6 +23,8 @@ const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+app.use('/', addNonExistingUser);
 
 app.use(router);
 
