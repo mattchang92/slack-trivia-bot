@@ -34,6 +34,18 @@ module.exports = (options = {}) => (
               type: 'button',
               value: 'help'
             },
+            {
+              name: 'minusMaz',
+              text: '-1 For Maz',
+              type: 'button',
+              value: 'minusMaz'
+            },
+            {
+              name: 'minusShawn',
+              text: '-1 for Shawn',
+              type: 'button',
+              value: 'minusShawn'
+            },
           ]
         }
       ]

@@ -93,6 +93,10 @@ const handleTopLevelNav = async (request, action) => {
     }
     case 'help':
       return content().helpMenu;
+    case 'minusMaz':
+      return { text: "Thank you for choosing Mazen." };
+    case 'minusShawn':
+      return { text: "Down with the King!" }
   }
 }
 
