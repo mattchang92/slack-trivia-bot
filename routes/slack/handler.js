@@ -26,7 +26,7 @@ const formatScoreResponse = score => {
 const sendAwardPointTemplate = async () => {
   const users = await models.User.find().lean();
   const nameSelection = users.map(user => ({
-    text: `${user.firstName} ${user.lastName}`,
+    text: `${user.firstName} ${user.lastName || ''}`,
     value: user._id,
   }));
 
