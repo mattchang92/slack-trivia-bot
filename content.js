@@ -17,12 +17,6 @@ module.exports = (options = {}) => (
               value: 'scoreSelect'
             },
             {
-              name: 'addQuestion',
-              text: 'Enqueue Question',
-              type: 'button',
-              value: 'addQuestion'
-            },
-            {
               name: 'viewCategories',
               text: 'View Question Categories',
               type: 'button',
