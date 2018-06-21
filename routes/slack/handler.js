@@ -5,6 +5,8 @@ const models = require('../../models');
 const content = require('../../content');
 const config = require('../../config');
 
+const axios = require('axios');
+
 const adminIds = [process.env.RUBY_SLACK_ID];
 
 const formatCategoryResponse = categories => {
@@ -79,7 +81,33 @@ const handleTopLevelNav = async (request, action) => {
       return response;
     }
     case 'addQuestion':
-      return { text: "Coming soon.." };
+      // return { text: "Coming soon.." };
+      const users = await models.User.find().lean();
+      const nameSelection = users.map(user => ({
+        label: `${user.firstName} ${user.lastName}`,
+        value: user._id,
+      }));
+
+      const options = {
+        url: 'https://slack.com/api/dialog.open',
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.BOT_ACCESS_TOKEN}`
+        },
+        data: content({ 
+          trigger_id: request.trigger_id,
+          callback_id: request.callback_id,
+          nameSelection,
+         }).nicknameUpdate,
+      }
+      console.log(request);
+      const triggerId = request.trigger_id;
+      axios.request(options).then(response => {
+        console.log('---------------------------------------')
+        console.log(JSON.stringify(response.data, null, 2))
+        console.log('---------------------------------------')
+      })
       return content().addQuestionInstructions;
     case 'viewCategories': {
       const currentSeason = await models.Season.findOne({ isActive: true });
@@ -96,9 +124,14 @@ const handleTopLevelNav = async (request, action) => {
   }
 }
 
+const handleDialog = async (request) => {
+
+};
 
 const handleInteractive = async (req) => {
   const request = JSON.parse(req.body.payload);
+  console.log(JSON.stringify(request, null, 2))
+  if (request.type === 'dialog_submission') return handleDialog(request);
   const action = request.actions[0];
   switch(request.callback_id) {
     case 'topLevelNav': {

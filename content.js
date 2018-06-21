@@ -162,6 +162,28 @@ module.exports = (options = {}) => (
           }
         ]
     },
+    nicknameUpdate: {
+      trigger_id: options.trigger_id,
+      dialog: {
+        callback_id: options.callback_id,
+        title: "Nickname Update",
+        notify_on_cancel: true,
+        submit_label: "Request",
+        elements: [
+            {
+                type: "select",
+                label: "Select the Finnian",
+                name: "user_select",
+                options: options.nameSelection,
+            },
+            {
+                type: "text",
+                label: "Enter a new nickname",
+                name: "updated_nickname"
+            }
+        ]
+      }
+    },
     permissionDeniedText: [
       "I'm sorry Dave, I'm afraid I can't do that",
       "Wait a second you're not Ruby",
