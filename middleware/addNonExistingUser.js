@@ -4,8 +4,9 @@ const titleize = require('../helpers').titleize;
 module.exports = async (req, res, next) => {
   const user = await User.findOne({ slackId: req.body.user_id });
   if (!user && req.body.user_name) {
-    const firstName = titleize(req.body.user_name.split('.')[0]);
-    const lastName = req.body.user_name.includes('.') ? titleize(req.body.user_name.split('.')[1]) : '';
+    const names = req.body.user_name.split('.');
+    const firstName = titleize(names[0]);
+    const lastName = names.length >= 2 ? titleize(names[1]) : '';
 
     new User({
       nickname: '',

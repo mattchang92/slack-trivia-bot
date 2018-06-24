@@ -1,5 +1,4 @@
 const moment = require('moment-timezone');
-const mongoose = require('mongoose');
 
 const models = require('../../models');
 const content = require('../../content');
@@ -9,60 +8,14 @@ const axios = require('axios');
 
 const adminIds = [process.env.RUBY_SLACK_ID];
 
-const formatCategoryResponse = categories => {
-  return Object.keys(categories)
-    .filter(name => config.days.includes(name))
-    .reduce((acc, name) => acc + `*${name}*: ${categories[name] || 'not yet set'}\n`, '');
-};
-
-const formatScoreResponse = score => {
-  return Object.keys(score)
-    .sort((user1, user2) => {
-      if (score[user1] === score[user2]) return user1 < user2 ? -1 : 1;
-
-      return score[user1] > score[user2] ? -1 : 1;
-    })
-    .reduce((acc, name, i) => acc + `${name}: ${score[name]} ${score[name] === 1 ? 'point' : 'points'} ${i === 0 ? ':trophy:' : ''} \n`, '');
-};
-
-const sendAwardPointTemplate = async () => {
-  const users = await models.User.find().lean();
-  const nameSelection = users.map(user => ({
-    text: `${user.firstName} ${user.lastName || ''}`,
-    value: user._id,
-  }));
-
-  return content({ nameSelection }).awardPoint;
-};
-
-const sendPermissionDeniedTemplate = () => {
-  const findRand = arr => arr[Math.floor(arr.length * Math.random())]; 
-  const text = content().permissionDeniedText;
-  const gifs = content().permissionDeniedGifs;
-
-  return content({ text: findRand(text), gif: findRand(gifs) }).permissionDeniedTemplate;
-}
-
-const cancelPoint = async pointId => {
-  await models.Point.remove({ _id: pointId });
-  return { text: "Point has been revoked" };
-}
-
-const buildScoreObject = async seasonId => {
-  const users = await models.User.find().lean();
-  const pointsAggregate = await models.Point.aggregate([
-    { $match: { seasonId } },
-    { $group: { _id: "$userId", points: { $sum: 1 } } }
-  ]);
-
-  return users.reduce((acc, user) => {
-    const pointsObj = pointsAggregate.find(obj => obj._id === user._id.toString());
-    const individualScore = pointsObj ? pointsObj.points : 0;
-    const name = user.nickname || `${user.firstName} ${user.lastName[0]}`;
-
-    return Object.assign(acc, { [name]: individualScore });
-  }, {});
-}
+const {
+  formatCategoryResponse,
+  formatScoreResponse,
+  sendAwardPointTemplate,
+  sendPermissionDeniedTemplate,
+  cancelPoint,
+  buildScoreObject 
+} = require('./helpers');
 
 const handleTopLevelNav = async (request, action) => {
   switch(action.name) {
@@ -80,35 +33,41 @@ const handleTopLevelNav = async (request, action) => {
 
       return response;
     }
-    case 'addQuestion':
-      // return { text: "Coming soon.." };
-      const users = await models.User.find().lean();
-      const nameSelection = users.map(user => ({
-        label: `${user.firstName} ${user.lastName}`,
-        value: user._id,
-      }));
+    case 'nickname':
+      const slackId = request.user.id;
 
-      const options = {
-        url: 'https://slack.com/api/dialog.open',
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.BOT_ACCESS_TOKEN}`
-        },
-        data: content({ 
-          trigger_id: request.trigger_id,
-          callback_id: request.callback_id,
-          nameSelection,
-         }).nicknameUpdate,
+      if (slackId && adminIds.includes(slackId)) {
+        const users = await models.User.find().lean();
+        const nameSelection = users.map(user => ({
+          label: `${user.firstName} ${user.lastName}`,
+          value: user.slackId,
+        }));
+  
+        const options = {
+          url: 'https://slack.com/api/dialog.open',
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${process.env.BOT_ACCESS_TOKEN}`
+          },
+          data: content({ 
+            trigger_id: request.trigger_id,
+            callback_id: request.callback_id,
+            nameSelection,
+           }).nicknameUpdate,
+        }
+  
+        axios.request(options);
+        return { text: 'Updating nicknames..' };
+      } else {
+        const user = await models.User.findOne({ slackId });
+        if (user.nickname) {
+          return { text: `Your nickname is: *${user.nickname}*` };
+        } else {
+          return { text: `You don't have a nickname set yet. Go bug Ruby :wink:` }
+        }
       }
-      console.log(request);
-      const triggerId = request.trigger_id;
-      axios.request(options).then(response => {
-        console.log('---------------------------------------')
-        console.log(JSON.stringify(response.data, null, 2))
-        console.log('---------------------------------------')
-      })
-      return content().addQuestionInstructions;
+
     case 'viewCategories': {
       const currentSeason = await models.Season.findOne({ isActive: true });
       if (currentSeason) {
@@ -124,14 +83,28 @@ const handleTopLevelNav = async (request, action) => {
   }
 }
 
-const handleDialog = async (request) => {
+const handleDialog = async (request) => {  
+  switch(request.callback_id) {
+    case 'nicknameUpdate': {
+      const { slackId, updatedNickname } = request.submission;
+      const selectedUser = await models.User.findOne({ slackId });
+    
+      if (selectedUser) {
+        selectedUser.nickname = updatedNickname;
+        await selectedUser.save();
+      }
+      break;
+    }
+  }
 
+  return {};
 };
 
 const handleInteractive = async (req) => {
   const request = JSON.parse(req.body.payload);
   console.log(JSON.stringify(request, null, 2))
   if (request.type === 'dialog_submission') return handleDialog(request);
+  if (!request.actions) return;
   const action = request.actions[0];
   switch(request.callback_id) {
     case 'topLevelNav': {
@@ -256,19 +229,19 @@ const handleText = async (req) => {
       if (!adminIds.includes(userSlackId)) return sendPermissionDeniedTemplate();
       return sendAwardPointTemplate();
     }
-    case 'question': {
-      return { text: "Coming soon..." };
-      const input = req.body.split(':').slice(1).join('');
-      const splitInput = input.split('@');
-      if (splitInput.length === 1) {
-        return { text: 'A time must be specified' };
-      } else if (splitInput.length > 2) {
-        return { text: 'Sorry but "@" is a reserved to specify the question delivery time' };
-      } else {
-        const question = splitInput[0].trim();
-        const time = splitInput[1].trim();
-      }
-    }
+    // case 'question': {
+    //   return { text: "Coming soon..." };
+    //   const input = req.body.split(':').slice(1).join('');
+    //   const splitInput = input.split('@');
+    //   if (splitInput.length === 1) {
+    //     return { text: 'A time must be specified' };
+    //   } else if (splitInput.length > 2) {
+    //     return { text: 'Sorry but "@" is a reserved to specify the question delivery time' };
+    //   } else {
+    //     const question = splitInput[0].trim();
+    //     const time = splitInput[1].trim();
+    //   }
+    // }
     case 'help':
       return content().helpMenu;
     default: 

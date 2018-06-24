@@ -17,10 +17,10 @@ module.exports = (options = {}) => (
               value: 'scoreSelect'
             },
             {
-              name: 'addQuestion',
-              text: 'Enqueue Question',
+              name: 'nickname',
+              text: 'Nicknames',
               type: 'button',
-              value: 'addQuestion'
+              value: 'nickname'
             },
             {
               name: 'viewCategories',
@@ -165,21 +165,21 @@ module.exports = (options = {}) => (
     nicknameUpdate: {
       trigger_id: options.trigger_id,
       dialog: {
-        callback_id: options.callback_id,
+        callback_id: 'nicknameUpdate',
         title: "Nickname Update",
         notify_on_cancel: true,
-        submit_label: "Request",
+        submit_label: "Update",
         elements: [
             {
                 type: "select",
                 label: "Select the Finnian",
-                name: "user_select",
+                name: "slackId",
                 options: options.nameSelection,
             },
             {
                 type: "text",
                 label: "Enter a new nickname",
-                name: "updated_nickname"
+                name: "updatedNickname"
             }
         ]
       }
