@@ -39,7 +39,7 @@ const handleTopLevelNav = async (request, action) => {
       if (slackId && adminIds.includes(slackId)) {
         const users = await models.User.find().lean();
         const nameSelection = users.map(user => ({
-          label: `${user.firstName} ${user.lastName}`,
+          label: `${user.firstName} ${user.lastName} (${user.nickname || 'Not set'})`,
           value: user.slackId,
         }));
   
