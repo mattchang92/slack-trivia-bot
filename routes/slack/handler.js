@@ -14,14 +14,15 @@ const {
   sendAwardPointTemplate,
   sendPermissionDeniedTemplate,
   cancelPoint,
-  buildScoreObject 
+  buildScoreObject
 } = require('./helpers');
 
 const handleTopLevelNav = async (request, action) => {
   switch(action.name) {
     case 'score': {
-      const seasons = await models.Season.find();
-      const actions = seasons.map(season => ({
+      const seasons = await models.Season.find().sort({ 'startDate': -1 });
+      const lastFourSeasons = seasons.slice(0, 4);
+      const actions = lastFourSeasons.map(season => ({
         name: season.seasonName,
         text: season.isActive ? "Current Season" : season.seasonName,
         type: 'button',
